@@ -17,8 +17,12 @@ func main() {
 	//TODO flagSets, right now the flags are on the gogit, not the subcommand
 	var expectedFlag string
 	flag.StringVar(&expectedFlag, "expected", "blob", "Expected Type of Object")
+	var messageFlag string
+	flag.StringVar(&messageFlag, "m", "", "Your Commit Message")
 	flag.Parse()
 	expected := []byte(expectedFlag)
+
+	fmt.Println(messageFlag)
 
 	switch flag.Arg(0) {
 	case "init":
@@ -31,6 +35,8 @@ func main() {
 		WriteTree(flag.Arg(1))
 	case "read-tree":
 		ReadTree(flag.Arg(1))
+	case "commit":
+		Commit(messageFlag)
 	}
 }
 
@@ -64,6 +70,24 @@ func WriteTree(directory string) {
 
 func ReadTree(oid string) {
 	base.ReadTree(oid, "./")
+}
+
+func Commit(message string) {
+	if message == "" {
+		//TODO actually STDERR?
+		fmt.Println("message flag is required, and must be non empty")
+		return
+	}
+
+	treeName := base.WriteTree(".")
+	var commit string
+	commit = fmt.Sprintf("tree %s\n", treeName)
+	commit += "\n"
+	commit += fmt.Sprintf("%s\n", message)
+
+	result := data.HashObject([]byte(commit), []byte("commit"))
+
+	fmt.Println(result)
 }
 
 func check(e error) {

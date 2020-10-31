@@ -172,3 +172,20 @@ func iterTreeEntries(oid string) [][]string {
 
 	return result
 }
+
+func Commit(message string) string {
+	if message == "" {
+		//TODO actually STDERR?
+		return "message flag is required, and must be non empty"
+	}
+
+	treeName := WriteTree(".")
+	var commit string
+	commit = fmt.Sprintf("tree %s\n", treeName)
+	commit += "\n"
+	commit += fmt.Sprintf("%s\n", message)
+
+	result := data.HashObject([]byte(commit), []byte("commit"))
+
+	return result
+}
