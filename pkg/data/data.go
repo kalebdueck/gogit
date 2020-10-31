@@ -25,6 +25,7 @@ func HashObject(dat []byte, type_ []byte) string {
 	h := sha1.New()
 	h.Write(hi)
 	oid := h.Sum(nil)
+
 	hash := hex.EncodeToString(oid)
 	err := ioutil.WriteFile("./"+GoDir+"/objects/"+hash, hi, 0644)
 	check(err)

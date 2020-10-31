@@ -58,11 +58,12 @@ func CatFile(object string, expected []byte) {
 }
 
 func WriteTree(directory string) {
-	base.WriteTree(directory)
+	result := base.WriteTree(directory)
+	fmt.Println(result)
 }
 
 func ReadTree(oid string) {
-	base.ReadTree(oid)
+	base.ReadTree(oid, "./")
 }
 
 func check(e error) {
