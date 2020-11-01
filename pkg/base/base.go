@@ -182,10 +182,13 @@ func Commit(message string) string {
 	treeName := WriteTree(".")
 	var commit string
 	commit = fmt.Sprintf("tree %s\n", treeName)
+	commit += fmt.Sprintf("parent %s\n", data.GetHead())
 	commit += "\n"
 	commit += fmt.Sprintf("%s\n", message)
 
-	result := data.HashObject([]byte(commit), []byte("commit"))
+	oid := data.HashObject([]byte(commit), []byte("commit"))
 
-	return result
+	data.SetHead(oid)
+
+	return oid
 }

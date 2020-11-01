@@ -73,19 +73,7 @@ func ReadTree(oid string) {
 }
 
 func Commit(message string) {
-	if message == "" {
-		//TODO actually STDERR?
-		fmt.Println("message flag is required, and must be non empty")
-		return
-	}
-
-	treeName := base.WriteTree(".")
-	var commit string
-	commit = fmt.Sprintf("tree %s\n", treeName)
-	commit += "\n"
-	commit += fmt.Sprintf("%s\n", message)
-
-	result := data.HashObject([]byte(commit), []byte("commit"))
+	result := base.Commit(message)
 
 	fmt.Println(result)
 }

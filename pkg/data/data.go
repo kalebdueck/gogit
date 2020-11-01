@@ -50,6 +50,19 @@ func GetObject(oid string, expected []byte) ([]byte, error) {
 	return remainder, nil
 }
 
+func SetHead(oid string) {
+	err := ioutil.WriteFile("./"+GoDir+"/HEAD", []byte(oid), 0644)
+	fmt.Println("hi")
+	check(err)
+}
+
+func GetHead() string {
+	oid, err := ioutil.ReadFile("./" + GoDir + "/HEAD")
+	check(err)
+
+	return string(oid)
+}
+
 func check(e error) {
 	if e != nil {
 		panic(e)
