@@ -192,3 +192,13 @@ func Commit(message string) string {
 
 	return oid
 }
+
+func GetCommit(oid string) string {
+	commit, err := data.GetObject(oid, []byte("commit"))
+
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(string(commit))
+	return string(commit)
+}

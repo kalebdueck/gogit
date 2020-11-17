@@ -6,6 +6,7 @@ import (
 	"gogit/pkg/base"
 	"gogit/pkg/data"
 	"os"
+	"strings"
 
 	//"flag"
 	//	"io"
@@ -37,6 +38,8 @@ func main() {
 		ReadTree(flag.Arg(1))
 	case "commit":
 		Commit(messageFlag)
+	case "log":
+		Log()
 	}
 }
 
@@ -76,6 +79,26 @@ func Commit(message string) {
 	result := base.Commit(message)
 
 	fmt.Println(result)
+}
+
+func Log() {
+	oid := data.GetHead()
+
+	for oid != "" {
+		commit := base.GetCommit(oid)
+
+		fmt.Printf("commit %s\n", oid)
+
+		var newOid string = ""
+		for _, line := range strings.Split(commit, "\n") {
+			split := strings.Split(line, " ")
+			if split[0] == "parent" {
+				newOid = split[1]
+			}
+		}
+
+		oid = newOid
+	}
 }
 
 func check(e error) {

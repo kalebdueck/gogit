@@ -40,8 +40,10 @@ func GetObject(oid string, expected []byte) ([]byte, error) {
 
 	//Split file on the zero byte using for loop
 	//TODO better splitting so i can just trim from file
-	type_ := file[:4]
-	remainder := file[5:]
+	expectedLength := len(expected)
+
+	type_ := file[:expectedLength]
+	remainder := file[expectedLength+1:]
 
 	if string(expected) != "none" && string(type_) != string(expected) {
 		return nil, fmt.Errorf("Expected %s, got %s", expected, type_)
@@ -58,7 +60,10 @@ func SetHead(oid string) {
 
 func GetHead() string {
 	oid, err := ioutil.ReadFile("./" + GoDir + "/HEAD")
-	check(err)
+
+	if err != nil {
+		return ""
+	}
 
 	return string(oid)
 }
