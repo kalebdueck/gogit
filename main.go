@@ -20,6 +20,8 @@ func main() {
 	flag.StringVar(&expectedFlag, "expected", "blob", "Expected Type of Object")
 	var messageFlag string
 	flag.StringVar(&messageFlag, "m", "", "Your Commit Message")
+	var oidFlag string
+	flag.StringVar(&oidFlag, "oid", "", "Your Commit OID")
 	flag.Parse()
 	expected := []byte(expectedFlag)
 
@@ -39,7 +41,7 @@ func main() {
 	case "commit":
 		Commit(messageFlag)
 	case "log":
-		Log()
+		Log(oidFlag)
 	}
 }
 
@@ -81,13 +83,15 @@ func Commit(message string) {
 	fmt.Println(result)
 }
 
-func Log() {
-	oid := data.GetHead()
+func Log(oid string) {
+	if oid == "" {
+		oid = data.GetHead()
+	}
 
 	for oid != "" {
 		commit := base.GetCommit(oid)
 
-		fmt.Printf("commit %s\n", oid)
+		fmt.Printf("commit: %s\n", oid)
 
 		var newOid string = ""
 		for _, line := range strings.Split(commit, "\n") {
