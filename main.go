@@ -1,54 +1,16 @@
 package main
 
 import (
-	"flag"
-	"fmt"
-	"gogit/pkg/base"
-	"gogit/pkg/data"
-	"os"
-	"strings"
-
+	"gogit/cmd"
 	//"flag"
 	//	"io"
-	"bufio"
-	"io/ioutil"
 )
 
 func main() {
-	//TODO flagSets, right now the flags are on the gogit, not the subcommand
-	var expectedFlag string
-	flag.StringVar(&expectedFlag, "expected", "blob", "Expected Type of Object")
-	var messageFlag string
-	flag.StringVar(&messageFlag, "m", "", "Your Commit Message")
-	var oidFlag string
-	flag.StringVar(&oidFlag, "oid", "", "Your Commit OID")
-	flag.Parse()
-	expected := []byte(expectedFlag)
-
-	fmt.Println(messageFlag)
-
-	switch flag.Arg(0) {
-	case "init":
-		Init()
-	case "hash-object":
-		HashObject(flag.Arg(1), expected)
-	case "cat-file":
-		CatFile(flag.Arg(1), expected)
-	case "write-tree":
-		WriteTree(flag.Arg(1))
-	case "read-tree":
-		ReadTree(flag.Arg(1))
-	case "commit":
-		Commit(messageFlag)
-	case "log":
-		Log(oidFlag)
-	}
+	cmd.Execute()
 }
 
-func Init() {
-	data.Init()
-}
-
+/*
 func HashObject(file string, type_ []byte) {
 	dat, err := ioutil.ReadFile(file)
 	check(err)
@@ -110,3 +72,4 @@ func check(e error) {
 		panic(e)
 	}
 }
+*/

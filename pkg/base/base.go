@@ -199,6 +199,5 @@ func GetCommit(oid string) string {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(string(commit))
 	return string(commit)
 }
