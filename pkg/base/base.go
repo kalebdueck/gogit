@@ -73,8 +73,10 @@ func ReadTree(tree_oid string, base_path string) {
 }
 
 func saveTreeToDir(tree_oid string, base_path string) {
+	fmt.Println(tree_oid)
 	for _, info := range iterTreeEntries(tree_oid) {
 		//TODO temporarily ignoring the directories
+		fmt.Println(info)
 		path := base_path + info[2]
 		switch info[0] {
 		case "blob":
@@ -166,6 +168,7 @@ func iterTreeEntries(oid string) [][]string {
 	tree, _ := data.GetObject(oid, []byte("tree"))
 	var result [][]string
 	for _, line := range strings.Split(string(tree), "\n") {
+		fmt.Println(line)
 		split := strings.Split(line, " ")
 		result = append(result, split)
 	}
@@ -193,11 +196,27 @@ func Commit(message string) string {
 	return oid
 }
 
-func GetCommit(oid string) string {
+type CommitData struct {
+	Tree    string
+	Parent  string
+	Message string
+}
+
+func GetCommit(oid string) CommitData {
 	commit, err := data.GetObject(oid, []byte("commit"))
+
+	commitLines := strings.Split(string(commit), "\n")
+
+	treeLine := strings.Split(commitLines[0], " ")
+	parentLine := strings.Split(commitLines[1], " ")
+	message := commitLines[3]
 
 	if err != nil {
 		panic(err)
 	}
-	return string(commit)
+	return CommitData{
+		Tree:    treeLine[1],
+		Parent:  parentLine[1],
+		Message: message,
+	}
 }

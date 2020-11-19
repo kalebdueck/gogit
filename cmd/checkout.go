@@ -1,0 +1,22 @@
+package cmd
+
+import (
+	"gogit/pkg/base"
+	"gogit/pkg/data"
+
+	"github.com/spf13/cobra"
+)
+
+func init() {
+}
+
+var checkoutCmd = &cobra.Command{
+	Use:   "checkout",
+	Short: "read-trees a specific commit, then moves HEAD to that commit",
+	Run: func(cmd *cobra.Command, args []string) {
+		oid := args[0]
+		commit := base.GetCommit(oid)
+		base.ReadTree(commit.Tree, "./")
+		data.SetHead(oid)
+	},
+}

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"gogit/pkg/base"
 	"gogit/pkg/data"
-	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -28,16 +27,10 @@ var logCmd = &cobra.Command{
 			commit := base.GetCommit(oid)
 
 			fmt.Printf("commit: %s\n", oid)
+			fmt.Printf("message: %s\n", commit.Message)
+			fmt.Printf("-----------\n")
 
-			var newOid string = ""
-			for _, line := range strings.Split(commit, "\n") {
-				split := strings.Split(line, " ")
-				if split[0] == "parent" {
-					newOid = split[1]
-				}
-			}
-
-			oid = newOid
+			oid = commit.Parent
 		}
 	},
 }

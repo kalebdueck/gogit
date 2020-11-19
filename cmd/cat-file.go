@@ -21,7 +21,7 @@ var catFileCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		object := args[0]
 
-		expected := []byte()
+		expected := []byte(object)
 		f := bufio.NewWriter(os.Stdout)
 		defer f.Flush()
 		resp, err := data.GetObject(object, expected)

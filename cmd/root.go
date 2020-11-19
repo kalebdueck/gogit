@@ -21,7 +21,7 @@ func init() {
 	rootCmd.AddCommand(readTreeCmd)
 	rootCmd.AddCommand(logCmd)
 	rootCmd.AddCommand(commitCmd)
-
+	rootCmd.AddCommand(checkoutCmd)
 }
 
 func Execute() {

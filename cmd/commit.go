@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	commitCmd.Flags().StringVar(&messageFlag, "message", "", "Commit message")
+	commitCmd.Flags().StringVarP(&messageFlag, "message", "m", "", "Commit message")
 	commitCmd.MarkFlagRequired("message")
 }
 
