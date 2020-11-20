@@ -22,8 +22,10 @@ func init() {
 	rootCmd.AddCommand(logCmd)
 	rootCmd.AddCommand(commitCmd)
 	rootCmd.AddCommand(checkoutCmd)
+	rootCmd.AddCommand(tagCmd)
 }
 
+//Execute runs the commands
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintln(os.Stderr, err)

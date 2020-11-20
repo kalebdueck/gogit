@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 )
 
 const GoDir string = ".gogit"
@@ -52,14 +53,25 @@ func GetObject(oid string, expected []byte) ([]byte, error) {
 	return remainder, nil
 }
 
-func SetHead(oid string) {
-	err := ioutil.WriteFile("./"+GoDir+"/HEAD", []byte(oid), 0644)
-	fmt.Println("hi")
-	check(err)
+func UpdateRef(oid string, ref string) {
+
+	filelocation := "./" + GoDir + "/" + ref
+	newpath := filepath.Dir(filelocation)
+	fmt.Println(newpath)
+	dirErr := os.MkdirAll(newpath, os.ModePerm)
+	if dirErr != nil {
+		panic(dirErr)
+	}
+
+	writeErr := ioutil.WriteFile(filelocation, []byte(oid), 0644)
+
+	if writeErr != nil {
+		panic(writeErr)
+	}
 }
 
-func GetHead() string {
-	oid, err := ioutil.ReadFile("./" + GoDir + "/HEAD")
+func GetRef(ref string) string {
+	oid, err := ioutil.ReadFile("./" + GoDir + "/" + ref)
 
 	if err != nil {
 		return ""

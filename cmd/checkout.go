@@ -17,6 +17,6 @@ var checkoutCmd = &cobra.Command{
 		oid := args[0]
 		commit := base.GetCommit(oid)
 		base.ReadTree(commit.Tree, "./")
-		data.SetHead(oid)
+		data.UpdateRef(oid, "HEAD")
 	},
 }

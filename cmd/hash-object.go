@@ -19,10 +19,10 @@ var hashObjectCmd = &cobra.Command{
 	Short: "",
 	Run: func(cmd *cobra.Command, args []string) {
 		file := args[0]
-		type_ := []byte(typeFlag)
+		types := []byte(typeFlag)
 		dat, err := ioutil.ReadFile(file)
 		check(err)
-		fmt.Println(data.HashObject(dat, type_))
+		fmt.Println(data.HashObject(dat, types))
 	},
 }
 

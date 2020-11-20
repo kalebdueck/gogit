@@ -20,7 +20,7 @@ var logCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		oid := oidFlag
 		if oid == "" {
-			oid = data.GetHead()
+			oid = data.GetRef("HEAD")
 		}
 
 		for oid != "" {

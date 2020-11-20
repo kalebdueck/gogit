@@ -185,13 +185,13 @@ func Commit(message string) string {
 	treeName := WriteTree(".")
 	var commit string
 	commit = fmt.Sprintf("tree %s\n", treeName)
-	commit += fmt.Sprintf("parent %s\n", data.GetHead())
+	commit += fmt.Sprintf("parent %s\n", data.GetRef("HEAD"))
 	commit += "\n"
 	commit += fmt.Sprintf("%s\n", message)
 
 	oid := data.HashObject([]byte(commit), []byte("commit"))
 
-	data.SetHead(oid)
+	data.UpdateRef(oid, "HEAD")
 
 	return oid
 }
@@ -219,4 +219,10 @@ func GetCommit(oid string) CommitData {
 		Parent:  parentLine[1],
 		Message: message,
 	}
+}
+
+func CreateTag(tagName string, oid string) string {
+	data.UpdateRef(oid, "refs/tags/"+tagName)
+
+	return tagName
 }
