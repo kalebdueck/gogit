@@ -18,7 +18,7 @@ var logCmd = &cobra.Command{
 	Use:   "log",
 	Short: "initializes a gogit repository",
 	Run: func(cmd *cobra.Command, args []string) {
-		oid := oidFlag
+		oid := base.GetOid(oidFlag)
 		if oid == "" {
 			oid = data.GetRef("HEAD")
 		}
