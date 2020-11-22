@@ -227,12 +227,22 @@ func CreateTag(tagName string, oid string) string {
 	return tagName
 }
 
-//Converts a string to an oid if exists
+//GetOid Converts a string to an oid if exists
 //Otherwise it asssumes the name was an oid and returns it
 func GetOid(name string) string {
-	ref := data.GetRef(name)
-	if ref != "" {
-		return ref
+	refLocations := []string{
+		fmt.Sprintf("%s", name),
+		fmt.Sprintf("refs/%s", name),
+		fmt.Sprintf("refs/tags/%s", name),
+		fmt.Sprintf("refs/heads/%s", name),
+	}
+
+	for _, location := range refLocations {
+		ref := data.GetRef(location)
+
+		if ref != "" {
+			return ref
+		}
 	}
 
 	return name
