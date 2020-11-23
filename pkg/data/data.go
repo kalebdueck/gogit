@@ -80,6 +80,55 @@ func GetRef(ref string) string {
 	return string(oid)
 }
 
+func IterRefs() map[string]string {
+
+	RefMap := make(map[string]string)
+	RefMap["HEAD"] = GetOid("HEAD")
+
+	RefDir := fmt.Sprintf("./%s/refs", GoDir)
+
+	err := filepath.Walk(RefDir,
+		func(path string, info os.FileInfo, err error) error {
+
+			if err != nil {
+				return err
+			}
+
+			RefMap[info.Name()] = GetOid(info.Name())
+			return nil
+		})
+	if err != nil {
+		panic(err)
+	}
+
+	return RefMap
+}
+
+func GetOid(name string) string {
+
+	if name == "" {
+		return "HEAD"
+	}
+
+	refLocations := []string{
+		fmt.Sprintf("%s", name),
+		fmt.Sprintf("refs/%s", name),
+		fmt.Sprintf("refs/tags/%s", name),
+		fmt.Sprintf("refs/heads/%s", name),
+	}
+
+	for _, location := range refLocations {
+		ref := GetRef(location)
+
+		if ref != "" {
+			return ref
+		}
+	}
+
+	return name
+
+}
+
 func check(e error) {
 	if e != nil {
 		panic(e)

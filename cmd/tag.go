@@ -16,6 +16,7 @@ var tagCmd = &cobra.Command{
 		tagName := args[0]
 		fmt.Println(tagName)
 
+		//Todo cobra default args?
 		var oid string
 		if len(args) > 1 {
 			oid = args[1]

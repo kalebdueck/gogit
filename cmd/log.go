@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"gogit/pkg/base"
-	"gogit/pkg/data"
 
 	"github.com/spf13/cobra"
 )
@@ -19,9 +18,6 @@ var logCmd = &cobra.Command{
 	Short: "initializes a gogit repository",
 	Run: func(cmd *cobra.Command, args []string) {
 		oid := base.GetOid(oidFlag)
-		if oid == "" {
-			oid = data.GetRef("HEAD")
-		}
 
 		for oid != "" {
 			commit := base.GetCommit(oid)
