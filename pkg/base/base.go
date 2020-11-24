@@ -80,7 +80,7 @@ func saveTreeToDir(tree_oid string, base_path string) {
 		path := base_path + info[2]
 		switch info[0] {
 		case "blob":
-			file, _ := data.GetObject(info[1], []byte("blob"))
+			file, _ := data.GetObject(info[1], "blob")
 			ioutil.WriteFile(path, file, 0644)
 			fmt.Println(path)
 
@@ -95,9 +95,6 @@ func saveTreeToDir(tree_oid string, base_path string) {
 }
 
 func emptyCurrentDirectory(directory string) {
-	fmt.Println("called")
-	//TODO gotta be a simple way to do this in one pass.
-
 	//Step one remove all files not ignored
 	walkErr := filepath.Walk(directory, func(path string, info os.FileInfo, err error) error {
 		if info.IsDir() {
@@ -165,7 +162,7 @@ func isDirEmpty(name string) (bool, error) {
 }
 
 func iterTreeEntries(oid string) [][]string {
-	tree, _ := data.GetObject(oid, []byte("tree"))
+	tree, _ := data.GetObject(oid, "tree")
 	var result [][]string
 	for _, line := range strings.Split(string(tree), "\n") {
 		fmt.Println(line)
@@ -203,7 +200,7 @@ type CommitData struct {
 }
 
 func GetCommit(oid string) CommitData {
-	commit, err := data.GetObject(oid, []byte("commit"))
+	commit, err := data.GetObject(oid, "commit")
 
 	commitLines := strings.Split(string(commit), "\n")
 
@@ -223,7 +220,6 @@ func GetCommit(oid string) CommitData {
 
 func CreateTag(tagName string, oid string) string {
 	data.UpdateRef(oid, "refs/tags/"+tagName)
-
 	return tagName
 }
 
@@ -231,4 +227,44 @@ func CreateTag(tagName string, oid string) string {
 //Otherwise it asssumes the name was an oid and returns it
 func GetOid(name string) string {
 	return data.GetOid(name)
+}
+
+//Iterate through each oid in oids finding every parent,
+//Filtering out the duplicates
+func IterCommitsAndParents(oids []string) []string {
+	var visited []string
+
+	for {
+		if len(oids) == 0 {
+			break
+		}
+
+		//Pop the last var off
+		last := oids[len(oids)-1]
+		oids = oids[:len(oids)-1]
+
+		if last == "" {
+			break
+		}
+
+		//if last in visited, loop again
+		var isVisited bool
+		for _, visitedOid := range visited {
+			if last == visitedOid {
+				isVisited = true
+				break
+			}
+		}
+		if isVisited {
+			break
+		}
+
+		visited = append(visited, last)
+
+		commit := GetCommit(last)
+
+		oids = append(oids, commit.Parent)
+	}
+
+	return visited
 }

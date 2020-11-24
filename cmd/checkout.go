@@ -14,7 +14,7 @@ var checkoutCmd = &cobra.Command{
 	Use:   "checkout",
 	Short: "read-trees a specific commit, then moves HEAD to that commit",
 	Run: func(cmd *cobra.Command, args []string) {
-		oid := args[0]
+		oid := data.GetOid(args[0])
 		commit := base.GetCommit(oid)
 		base.ReadTree(commit.Tree, "./")
 		data.UpdateRef(oid, "HEAD")

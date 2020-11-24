@@ -34,7 +34,7 @@ func HashObject(dat []byte, type_ []byte) string {
 	return hash
 }
 
-func GetObject(oid string, expected []byte) ([]byte, error) {
+func GetObject(oid string, expected string) ([]byte, error) {
 	fileName := "./" + GoDir + "/objects/" + oid
 	file, err := ioutil.ReadFile(fileName)
 	check(err)
@@ -46,7 +46,7 @@ func GetObject(oid string, expected []byte) ([]byte, error) {
 	type_ := file[:expectedLength]
 	remainder := file[expectedLength+1:]
 
-	if string(expected) != "none" && string(type_) != string(expected) {
+	if expected != "none" && string(type_) != expected {
 		return nil, fmt.Errorf("Expected %s, got %s", expected, type_)
 	}
 
@@ -94,6 +94,9 @@ func IterRefs() map[string]string {
 				return err
 			}
 
+			if info.IsDir() {
+				return nil
+			}
 			RefMap[info.Name()] = GetOid(info.Name())
 			return nil
 		})
