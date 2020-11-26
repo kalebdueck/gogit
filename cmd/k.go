@@ -33,6 +33,5 @@ var kCmd = &cobra.Command{
 		dot += "}"
 
 		print(dot)
-
 	},
 }

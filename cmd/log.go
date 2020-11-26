@@ -7,26 +7,21 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func init() {
-	logCmd.Flags().StringVar(&oidFlag, "oid", "", "Expected type of Object")
-}
-
 var oidFlag string
 
 var logCmd = &cobra.Command{
 	Use:   "log",
 	Short: "initializes a gogit repository",
 	Run: func(cmd *cobra.Command, args []string) {
-		oid := base.GetOid(oidFlag)
+		oid := base.GetOid(args[0])
 
-		for oid != "" {
-			commit := base.GetCommit(oid)
+		for _, commitOid := range base.IterCommitsAndParents([]string{oid}) {
+			commit := base.GetCommit(commitOid)
 
-			fmt.Printf("commit: %s\n", oid)
+			fmt.Printf("commit: %s\n", commitOid)
 			fmt.Printf("message: %s\n", commit.Message)
 			fmt.Printf("-----------\n")
 
-			oid = commit.Parent
 		}
 	},
 }
