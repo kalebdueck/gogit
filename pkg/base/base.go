@@ -188,7 +188,7 @@ func Commit(message string) string {
 
 	oid := data.HashObject([]byte(commit), []byte("commit"))
 
-	//data.UpdateRef(oid, "HEAD")
+	data.UpdateRef(oid, data.RefValue{Value: "HEAD"})
 
 	return oid
 }
@@ -219,7 +219,7 @@ func GetCommit(oid string) CommitData {
 }
 
 func CreateTag(tagName string, oid string) string {
-	data.UpdateRef(oid, data.RefValue{})
+	data.UpdateRef(oid, data.RefValue{Value: "refs/tags/" + tagName})
 	return tagName
 }
 

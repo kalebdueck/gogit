@@ -36,6 +36,7 @@ func HashObject(dat []byte, type_ []byte) string {
 
 func GetObject(oid string, expected string) ([]byte, error) {
 	fileName := "./" + GoDir + "/objects/" + oid
+
 	file, err := ioutil.ReadFile(fileName)
 	check(err)
 
@@ -57,7 +58,8 @@ func UpdateRef(oid string, refValue RefValue) {
 
 	filelocation := "./" + GoDir + "/" + refValue.Value
 	newpath := filepath.Dir(filelocation)
-	fmt.Println(newpath)
+	fmt.Println(refValue)
+	fmt.Println(filelocation)
 	dirErr := os.MkdirAll(newpath, os.ModePerm)
 	if dirErr != nil {
 		panic(dirErr)
