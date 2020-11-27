@@ -24,6 +24,7 @@ func init() {
 	rootCmd.AddCommand(checkoutCmd)
 	rootCmd.AddCommand(tagCmd)
 	rootCmd.AddCommand(kCmd)
+	rootCmd.AddCommand(branchCmd)
 }
 
 //Execute runs the commands

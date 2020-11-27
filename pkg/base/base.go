@@ -188,7 +188,7 @@ func Commit(message string) string {
 
 	oid := data.HashObject([]byte(commit), []byte("commit"))
 
-	data.UpdateRef(oid, "HEAD")
+	//data.UpdateRef(oid, "HEAD")
 
 	return oid
 }
@@ -219,13 +219,13 @@ func GetCommit(oid string) CommitData {
 }
 
 func CreateTag(tagName string, oid string) string {
-	data.UpdateRef(oid, "refs/tags/"+tagName)
+	data.UpdateRef(oid, data.RefValue{})
 	return tagName
 }
 
 //GetOid Converts a string to an oid if exists
 //Otherwise it asssumes the name was an oid and returns it
-func GetOid(name string) string {
+func GetOid(name string) data.RefValue {
 	return data.GetOid(name)
 }
 
@@ -267,4 +267,8 @@ func IterCommitsAndParents(oids []string) []string {
 	}
 
 	return visited
+}
+
+func CreateBranch(name string, startPoint string) {
+
 }

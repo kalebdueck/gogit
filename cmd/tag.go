@@ -21,7 +21,7 @@ var tagCmd = &cobra.Command{
 		if len(args) > 1 {
 			oid = args[1]
 		} else {
-			oid = data.GetRef("HEAD")
+			oid = data.GetRef("HEAD").Value
 		}
 
 		base.CreateTag(tagName, oid)

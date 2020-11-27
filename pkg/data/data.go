@@ -53,9 +53,9 @@ func GetObject(oid string, expected string) ([]byte, error) {
 	return remainder, nil
 }
 
-func UpdateRef(oid string, ref string) {
+func UpdateRef(oid string, refValue RefValue) {
 
-	filelocation := "./" + GoDir + "/" + ref
+	filelocation := "./" + GoDir + "/" + refValue.Value
 	newpath := filepath.Dir(filelocation)
 	fmt.Println(newpath)
 	dirErr := os.MkdirAll(newpath, os.ModePerm)
@@ -70,20 +70,32 @@ func UpdateRef(oid string, ref string) {
 	}
 }
 
-func GetRef(ref string) string {
+func GetRef(ref string) RefValue {
 	oid, err := ioutil.ReadFile("./" + GoDir + "/" + ref)
 
 	if err != nil {
-		return ""
+		return RefValue{
+			Value: "",
+		}
 	}
 
-	return string(oid)
+	value := string(oid)
+
+	if value[:3] == "ref:" {
+		return RefValue{
+			Value: value[4:],
+		}
+	}
+
+	return RefValue{
+		Value: value,
+	}
 }
 
 func IterRefs() map[string]string {
 
 	RefMap := make(map[string]string)
-	RefMap["HEAD"] = GetOid("HEAD")
+	RefMap["HEAD"] = GetOid("HEAD").Value
 
 	RefDir := fmt.Sprintf("./%s/refs", GoDir)
 
@@ -97,7 +109,7 @@ func IterRefs() map[string]string {
 			if info.IsDir() {
 				return nil
 			}
-			RefMap[info.Name()] = GetOid(info.Name())
+			RefMap[info.Name()] = GetOid(info.Name()).Value
 			return nil
 		})
 	if err != nil {
@@ -107,10 +119,10 @@ func IterRefs() map[string]string {
 	return RefMap
 }
 
-func GetOid(name string) string {
+func GetOid(name string) RefValue {
 
 	if name == "" {
-		return "HEAD"
+		return RefValue{Value: "HEAD"}
 	}
 
 	refLocations := []string{
@@ -123,12 +135,14 @@ func GetOid(name string) string {
 	for _, location := range refLocations {
 		ref := GetRef(location)
 
-		if ref != "" {
+		if ref.Value != "" {
 			return ref
 		}
 	}
 
-	return name
+	return RefValue{
+		Value: name,
+	}
 
 }
 
