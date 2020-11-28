@@ -54,18 +54,20 @@ func GetObject(oid string, expected string) ([]byte, error) {
 	return remainder, nil
 }
 
-func UpdateRef(oid string, refValue RefValue) {
+func UpdateRef(ref string, refValue RefValue) {
+  if refValue.Symbolic == true {
+    return
+  }
 
-	filelocation := "./" + GoDir + "/" + refValue.Value
+  trueRef, _ := GetRefInternal(ref)
+	filelocation := "./" + GoDir + "/" + trueRef 
 	newpath := filepath.Dir(filelocation)
-	fmt.Println(refValue)
-	fmt.Println(filelocation)
 	dirErr := os.MkdirAll(newpath, os.ModePerm)
 	if dirErr != nil {
 		panic(dirErr)
 	}
 
-	writeErr := ioutil.WriteFile(filelocation, []byte(oid), 0644)
+	writeErr := ioutil.WriteFile(filelocation, []byte(refValue.Value), 0644)
 
 	if writeErr != nil {
 		panic(writeErr)
@@ -73,23 +75,28 @@ func UpdateRef(oid string, refValue RefValue) {
 }
 
 func GetRef(ref string) RefValue {
+  _, refValue := GetRefInternal(ref)
+
+  return refValue
+}
+
+func GetRefInternal(ref string) (string, RefValue) {
 	oid, err := ioutil.ReadFile("./" + GoDir + "/" + ref)
 
 	if err != nil {
-		return RefValue{
+		return "", RefValue{
 			Value: "",
 		}
 	}
 
 	value := string(oid)
 
-	if value[:3] == "ref:" {
-		return RefValue{
-			Value: value[4:],
-		}
-	}
+  //If we're a symbolic ref, chase the actual ref down
+  if value[:3] == "ref:" {
+    return GetRefInternal(value[4:])
+  }
 
-	return RefValue{
+	return ref, RefValue{
 		Value: value,
 	}
 }
