@@ -182,7 +182,7 @@ func Commit(message string) string {
 	treeName := WriteTree(".")
 	var commit string
 	commit = fmt.Sprintf("tree %s\n", treeName)
-	commit += fmt.Sprintf("parent %s\n", data.GetRef("HEAD"))
+	commit += fmt.Sprintf("parent %s\n", data.GetRef("HEAD", true).Value)
 	commit += "\n"
 	commit += fmt.Sprintf("%s\n", message)
 
@@ -270,5 +270,4 @@ func IterCommitsAndParents(oids []string) []string {
 }
 
 func CreateBranch(name string, startPoint string) {
-
 }

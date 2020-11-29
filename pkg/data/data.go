@@ -59,7 +59,7 @@ func UpdateRef(ref string, refValue RefValue) {
     return
   }
 
-  trueRef, _ := GetRefInternal(ref)
+  trueRef, _ := GetRefInternal(ref, true)
 	filelocation := "./" + GoDir + "/" + trueRef 
 	newpath := filepath.Dir(filelocation)
 	dirErr := os.MkdirAll(newpath, os.ModePerm)
@@ -74,13 +74,13 @@ func UpdateRef(ref string, refValue RefValue) {
 	}
 }
 
-func GetRef(ref string) RefValue {
-  _, refValue := GetRefInternal(ref)
+func GetRef(ref string, deref bool) RefValue {
+  _, refValue := GetRefInternal(ref, deref)
 
   return refValue
 }
 
-func GetRefInternal(ref string) (string, RefValue) {
+func GetRefInternal(ref string, deref bool) (string, RefValue) {
 	oid, err := ioutil.ReadFile("./" + GoDir + "/" + ref)
 
 	if err != nil {
@@ -93,7 +93,7 @@ func GetRefInternal(ref string) (string, RefValue) {
 
   //If we're a symbolic ref, chase the actual ref down
   if value[:3] == "ref:" {
-    return GetRefInternal(value[4:])
+    return GetRefInternal(value[4:], deref)
   }
 
 	return ref, RefValue{
@@ -101,7 +101,7 @@ func GetRefInternal(ref string) (string, RefValue) {
 	}
 }
 
-func IterRefs() map[string]string {
+func IterRefs(deref bool) map[string]string {
 
 	RefMap := make(map[string]string)
 	RefMap["HEAD"] = GetOid("HEAD").Value
@@ -118,7 +118,7 @@ func IterRefs() map[string]string {
 			if info.IsDir() {
 				return nil
 			}
-			RefMap[info.Name()] = GetOid(info.Name()).Value
+			RefMap[info.Name()] = GetRef(info.Name(), deref).Value
 			return nil
 		})
 	if err != nil {
@@ -142,7 +142,7 @@ func GetOid(name string) RefValue {
 	}
 
 	for _, location := range refLocations {
-		ref := GetRef(location)
+		ref := GetRef(location, true)
 
 		if ref.Value != "" {
 			return ref

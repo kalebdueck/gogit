@@ -15,10 +15,12 @@ var kCmd = &cobra.Command{
 		dot := "digraph commits {\n"
 
 		var oids []string
-		for refname, ref := range data.IterRefs() {
+		for refname, ref := range data.IterRefs(false) {
 			dot += fmt.Sprintf("\"%s\" [shape=note]\n", refname)
 			dot += fmt.Sprintf("\"%s\" -> \"%s\"\n", refname, ref)
-			oids = append(oids, ref)
+      if ref.Symbolic == false {
+        oids = append(oids, ref)
+      }
 
 		}
 
