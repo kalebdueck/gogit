@@ -55,11 +55,14 @@ func GetObject(oid string, expected string) ([]byte, error) {
 }
 
 func UpdateRef(ref string, refValue RefValue) {
-  if refValue.Symbolic == true {
-    return
-  }
 
   trueRef, _ := GetRefInternal(ref, true)
+
+  value := refValue.Value
+  if refValue.Symbolic {
+    value = fmt.Sprintf("ref: %s", refValue.Value)
+  }
+
 	filelocation := "./" + GoDir + "/" + trueRef 
 	newpath := filepath.Dir(filelocation)
 	dirErr := os.MkdirAll(newpath, os.ModePerm)
@@ -67,7 +70,7 @@ func UpdateRef(ref string, refValue RefValue) {
 		panic(dirErr)
 	}
 
-	writeErr := ioutil.WriteFile(filelocation, []byte(refValue.Value), 0644)
+	writeErr := ioutil.WriteFile(filelocation, []byte(value), 0644)
 
 	if writeErr != nil {
 		panic(writeErr)
