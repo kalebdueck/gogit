@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"gogit/pkg/base"
 	"gogit/pkg/data"
 
@@ -14,9 +15,24 @@ var checkoutCmd = &cobra.Command{
 	Use:   "checkout",
 	Short: "read-trees a specific commit, then moves HEAD to that commit",
 	Run: func(cmd *cobra.Command, args []string) {
-		oid := data.GetOid(args[0])
+		name := args[0]
+		oid := data.GetOid(name)
 		commit := base.GetCommit(oid.Value)
 		base.ReadTree(commit.Tree, "./")
-		data.UpdateRef(oid.Value, data.RefValue{Value: "HEAD"})
+
+		var head data.RefValue
+		if base.IsBranch(name) {
+			head = data.RefValue{
+				Value:    fmt.Sprintf("refs/heads/%s", name),
+				Symbolic: true,
+			}
+		} else {
+			head = data.RefValue{
+				Value:    oid.Value,
+				Symbolic: false,
+			}
+		}
+
+		data.UpdateRef("HEAD", head, false)
 	},
 }

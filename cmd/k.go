@@ -18,10 +18,9 @@ var kCmd = &cobra.Command{
 		for refname, ref := range data.IterRefs(false) {
 			dot += fmt.Sprintf("\"%s\" [shape=note]\n", refname)
 			dot += fmt.Sprintf("\"%s\" -> \"%s\"\n", refname, ref)
-      if ref.Symbolic == false {
-        oids = append(oids, ref)
-      }
-
+			if ref.Symbolic == false {
+				oids = append(oids, ref.Value)
+			}
 		}
 
 		for _, oid := range base.IterCommitsAndParents(oids) {

@@ -188,7 +188,7 @@ func Commit(message string) string {
 
 	oid := data.HashObject([]byte(commit), []byte("commit"))
 
-	data.UpdateRef(oid, data.RefValue{Value: "HEAD"})
+	data.UpdateRef("HEAD", data.RefValue{Value: oid}, true)
 
 	return oid
 }
@@ -219,7 +219,7 @@ func GetCommit(oid string) CommitData {
 }
 
 func CreateTag(tagName string, oid string) string {
-	data.UpdateRef(oid, data.RefValue{Value: "refs/tags/" + tagName})
+	data.UpdateRef("refs/tags/"+tagName, data.RefValue{Value: oid}, true)
 	return tagName
 }
 
@@ -261,7 +261,10 @@ func IterCommitsAndParents(oids []string) []string {
 
 		visited = append(visited, last)
 
+		fmt.Println(last)
+		fmt.Println("que")
 		commit := GetCommit(last)
+		fmt.Println(commit)
 
 		oids = append(oids, commit.Parent)
 	}
@@ -269,5 +272,22 @@ func IterCommitsAndParents(oids []string) []string {
 	return visited
 }
 
-func CreateBranch(name string, startPoint string) {
+func CreateBranch(name string, oid string) {
+	data.UpdateRef("refs/heads/"+name, data.RefValue{Value: oid}, true)
+}
+
+func IsBranch(branch string) bool {
+	return data.GetRef(fmt.Sprintf("refs/heads/%s", branch), true).Value != ""
+}
+
+func Init() {
+	data.Init()
+	data.UpdateRef(
+		"HEAD",
+		data.RefValue{
+			Symbolic: true,
+			Value:    "refs/head/master",
+		},
+		true,
+	)
 }

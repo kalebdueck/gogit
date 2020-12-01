@@ -13,9 +13,13 @@ var logCmd = &cobra.Command{
 	Use:   "log",
 	Short: "initializes a gogit repository",
 	Run: func(cmd *cobra.Command, args []string) {
-		oid := base.GetOid(args[0])
 
-		for _, commitOid := range base.IterCommitsAndParents([]string{oid.Value}) {
+		var oid string
+		if len(args) > 0 {
+			oid = args[0]
+		}
+
+		for _, commitOid := range base.IterCommitsAndParents([]string{oid}) {
 			commit := base.GetCommit(commitOid)
 
 			fmt.Printf("commit: %s\n", commitOid)

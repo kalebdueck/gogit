@@ -13,7 +13,10 @@ var branchCmd = &cobra.Command{
 	Args:  cobra.RangeArgs(1, 2),
 	Run: func(cmd *cobra.Command, args []string) {
 		branchName := args[0]
-		startPoint := args[1]
+		startPoint := "HEAD"
+		if len(args) > 1 {
+			startPoint = args[1]
+		}
 
 		base.CreateBranch(branchName, startPoint)
 

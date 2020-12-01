@@ -35,6 +35,8 @@ func HashObject(dat []byte, type_ []byte) string {
 }
 
 func GetObject(oid string, expected string) ([]byte, error) {
+	fmt.Println(oid)
+	fmt.Println("hi")
 	fileName := "./" + GoDir + "/objects/" + oid
 
 	file, err := ioutil.ReadFile(fileName)
@@ -54,16 +56,16 @@ func GetObject(oid string, expected string) ([]byte, error) {
 	return remainder, nil
 }
 
-func UpdateRef(ref string, refValue RefValue) {
+func UpdateRef(ref string, refValue RefValue, deref bool) {
+	trueRef, _ := GetRefInternal(ref, deref)
+	fmt.Println("TRUEREF" + ref)
 
-  trueRef, _ := GetRefInternal(ref, true)
+	value := refValue.Value
+	if refValue.Symbolic {
+		value = fmt.Sprintf("ref: %s", refValue.Value)
+	}
 
-  value := refValue.Value
-  if refValue.Symbolic {
-    value = fmt.Sprintf("ref: %s", refValue.Value)
-  }
-
-	filelocation := "./" + GoDir + "/" + trueRef 
+	filelocation := "./" + GoDir + "/" + trueRef
 	newpath := filepath.Dir(filelocation)
 	dirErr := os.MkdirAll(newpath, os.ModePerm)
 	if dirErr != nil {
@@ -78,36 +80,36 @@ func UpdateRef(ref string, refValue RefValue) {
 }
 
 func GetRef(ref string, deref bool) RefValue {
-  _, refValue := GetRefInternal(ref, deref)
+	_, refValue := GetRefInternal(ref, deref)
 
-  return refValue
+	return refValue
 }
 
 func GetRefInternal(ref string, deref bool) (string, RefValue) {
 	oid, err := ioutil.ReadFile("./" + GoDir + "/" + ref)
 
-	if err != nil {
-		return "", RefValue{
-			Value: "",
-		}
+	var value string
+	if err == nil {
+		value = string(oid)
 	}
 
-	value := string(oid)
+	//If we're a symbolic ref, chase the actual ref down
+	symbolic := len(value) > 4 && value[:3] == "ref:"
 
-  //If we're a symbolic ref, chase the actual ref down
-  if value[:3] == "ref:" {
-    return GetRefInternal(value[4:], deref)
-  }
+	if symbolic && deref {
+		return GetRefInternal(value[4:], deref)
+	}
 
 	return ref, RefValue{
-		Value: value,
+		Value:    value,
+		Symbolic: symbolic,
 	}
 }
 
-func IterRefs(deref bool) map[string]string {
+func IterRefs(deref bool) map[string]RefValue {
 
-	RefMap := make(map[string]string)
-	RefMap["HEAD"] = GetOid("HEAD").Value
+	RefMap := make(map[string]RefValue)
+	RefMap["HEAD"] = GetOid("HEAD")
 
 	RefDir := fmt.Sprintf("./%s/refs", GoDir)
 
@@ -121,7 +123,7 @@ func IterRefs(deref bool) map[string]string {
 			if info.IsDir() {
 				return nil
 			}
-			RefMap[info.Name()] = GetRef(info.Name(), deref).Value
+			RefMap[info.Name()] = GetRef(info.Name(), deref)
 			return nil
 		})
 	if err != nil {

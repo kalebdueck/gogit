@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"gogit/pkg/data"
+	"gogit/pkg/base"
 
 	"github.com/spf13/cobra"
 )
@@ -15,7 +15,7 @@ var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "initializes a gogit repository",
 	Run: func(cmd *cobra.Command, args []string) {
-		data.Init()
+		base.Init()
 		fmt.Println(".gogit repository initialized")
 	},
 }
