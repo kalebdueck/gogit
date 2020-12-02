@@ -17,6 +17,7 @@ var checkoutCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		name := args[0]
 		oid := data.GetOid(name)
+		fmt.Println(oid)
 		commit := base.GetCommit(oid.Value)
 		base.ReadTree(commit.Tree, "./")
 
