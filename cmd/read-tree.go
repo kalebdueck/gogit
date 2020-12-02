@@ -11,6 +11,6 @@ var readTreeCmd = &cobra.Command{
 	Short: "initializes a gogit repository",
 	Run: func(cmd *cobra.Command, args []string) {
 		oid := base.GetOid(args[0])
-		base.ReadTree(oid.Value, "./")
+		base.ReadTree(oid, "./")
 	},
 }

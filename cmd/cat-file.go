@@ -23,7 +23,7 @@ var catFileCmd = &cobra.Command{
 		oid := base.GetOid(args[0])
 		f := bufio.NewWriter(os.Stdout)
 		defer f.Flush()
-		resp, err := data.GetObject(oid.Value, expectedFlag)
+		resp, err := data.GetObject(oid, expectedFlag)
 
 		if err != nil {
 			panic(err)

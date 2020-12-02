@@ -200,6 +200,9 @@ type CommitData struct {
 }
 
 func GetCommit(oid string) CommitData {
+	fmt.Println("getting commit")
+	fmt.Println(oid)
+
 	commit, err := data.GetObject(oid, "commit")
 
 	commitLines := strings.Split(string(commit), "\n")
@@ -225,7 +228,7 @@ func CreateTag(tagName string, oid string) string {
 
 //GetOid Converts a string to an oid if exists
 //Otherwise it asssumes the name was an oid and returns it
-func GetOid(name string) data.RefValue {
+func GetOid(name string) string {
 	return data.GetOid(name)
 }
 
@@ -273,6 +276,7 @@ func IterCommitsAndParents(oids []string) []string {
 }
 
 func CreateBranch(name string, oid string) {
+
 	data.UpdateRef("refs/heads/"+name, data.RefValue{Value: oid}, true)
 }
 

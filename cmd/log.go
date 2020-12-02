@@ -18,7 +18,10 @@ var logCmd = &cobra.Command{
 		if len(args) > 0 {
 			oid = args[0]
 		}
+		oid = base.GetOid(oid)
 
+		fmt.Println("logging")
+		fmt.Println(oid)
 		for _, commitOid := range base.IterCommitsAndParents([]string{oid}) {
 			commit := base.GetCommit(commitOid)
 

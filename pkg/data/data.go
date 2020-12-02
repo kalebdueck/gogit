@@ -35,8 +35,6 @@ func HashObject(dat []byte, type_ []byte) string {
 }
 
 func GetObject(oid string, expected string) ([]byte, error) {
-	fmt.Println(oid)
-	fmt.Println("hi")
 	fileName := "./" + GoDir + "/objects/" + oid
 
 	file, err := ioutil.ReadFile(fileName)
@@ -57,8 +55,9 @@ func GetObject(oid string, expected string) ([]byte, error) {
 }
 
 func UpdateRef(ref string, refValue RefValue, deref bool) {
-	trueRef, _ := GetRefInternal(ref, deref)
+	trueRef, refs := GetRefInternal(ref, deref)
 	fmt.Println("TRUEREF" + ref)
+	fmt.Println(refs)
 
 	value := refValue.Value
 	if refValue.Symbolic {
@@ -86,6 +85,9 @@ func GetRef(ref string, deref bool) RefValue {
 }
 
 func GetRefInternal(ref string, deref bool) (string, RefValue) {
+	fmt.Println("internal")
+	fmt.Println("./" + GoDir + "/" + ref)
+
 	oid, err := ioutil.ReadFile("./" + GoDir + "/" + ref)
 
 	var value string
@@ -109,7 +111,7 @@ func GetRefInternal(ref string, deref bool) (string, RefValue) {
 func IterRefs(deref bool) map[string]RefValue {
 
 	RefMap := make(map[string]RefValue)
-	RefMap["HEAD"] = GetOid("HEAD")
+	RefMap["HEAD"] = RefValue{Value: GetOid("HEAD")}
 
 	RefDir := fmt.Sprintf("./%s/refs", GoDir)
 
@@ -133,10 +135,10 @@ func IterRefs(deref bool) map[string]RefValue {
 	return RefMap
 }
 
-func GetOid(name string) RefValue {
+func GetOid(name string) string {
 
 	if name == "" {
-		return RefValue{Value: "HEAD"}
+		name = "HEAD"
 	}
 
 	refLocations := []string{
@@ -147,17 +149,19 @@ func GetOid(name string) RefValue {
 	}
 
 	for _, location := range refLocations {
-		ref := GetRef(location, true)
+
+		ref := GetRef(location, false)
 
 		if ref.Value != "" {
-			return ref
+			fmt.Println("return")
+			fmt.Println(location)
+			fmt.Println(ref)
+			return GetRef(location, true).Value
 		}
 	}
+	fmt.Println("WHAT")
 
-	return RefValue{
-		Value: name,
-	}
-
+	return name
 }
 
 func check(e error) {
